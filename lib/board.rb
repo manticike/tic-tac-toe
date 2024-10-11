@@ -28,26 +28,20 @@ class Board
 
   # Check if the current player has won the game
   def winning_combination?(symbol)
-    # Check the rows and column for a winner
-    (0..2).each do |i|
-      return true if grid[i][0] == symbol && grid[i][1] == symbol && grid[i][2] == symbol ||
-                     grid[0][i] == symbol && grid[1][i] == symbol && grid[2][i] == symbol
-    end
-
-    # Check main diagonal
-    if grid[0][0] == symbol && grid[1][1] == symbol && grid[2][2] == symbol
-      return true
-    end
-
-    # Check anti-diagonal
-    if grid[0][2] == symbol && grid[1][1] == symbol && grid[2][0] == symbol
-      true
-    end
+    (0..2).any? { |i| grid[i].all? { |cell| cell == symbol } } || # Check the rows to see the winner
+      (0..2).any? { |i| grid.all? { |row| row[i] == symbol } } || # Check colums to see the winner
+      [grid[0][0], grid[1][1], grid[2][2]].all? { |cell| cell == symbol } || # top left corner to down right corner
+      [grid[0][2], grid[1][1], grid[2][0]].all? { |cell| cell == symbol } # opposite diagonal of the above
   end
 
   # Ensuring the player makes a legal move
   def valid_move?(row, col)
     row.between?(0, 2) && col.between?(0, 2) && grid[row][col] == ' '
+  end
+
+  # Check if the board is full (i.e. a draw)
+  def full?
+    grid.flatten.none? { |cell| cell == ' ' }
   end
 end
 
